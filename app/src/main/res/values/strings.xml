@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">SpotifySongDisplay</string>
+
+    <string-array name="positions">
+        <item>Top</item>
+        <item>Centre</item>
+        <item>Bottom</item>
+    </string-array>
+</resources>

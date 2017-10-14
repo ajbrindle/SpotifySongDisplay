@@ -1,5 +1,6 @@
 package com.sk7software.spotifysongdisplay;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -7,10 +8,12 @@ import android.net.Uri;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.Spinner;
@@ -33,6 +36,9 @@ public class MainActivity extends Activity {
         if (textSize == 0) {
             textSize = 32;
         }
+
+        Toolbar tb = (Toolbar)findViewById(R.id.toolbar);
+        tb.setTitle("Track Display");
 
         Switch swiShowSong = (Switch)findViewById(R.id.swiShowSong);
         boolean isChecked = PreferencesUtil.getInstance().getBooleanPreference(PreferencesUtil.PREFERNECE_SHOW_TRACK);
@@ -96,6 +102,14 @@ public class MainActivity extends Activity {
         swiScreenOn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 PreferencesUtil.getInstance().addPreference(PreferencesUtil.PREFERNECE_SCREEN_ON, isChecked);
+            }
+        });
+
+        Button btnActivate = (Button)findViewById(R.id.btnActivate);
+        btnActivate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
             }
         });
 

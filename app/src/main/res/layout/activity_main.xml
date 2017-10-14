@@ -7,10 +7,25 @@
     android:orientation="vertical"
     tools:context="com.sk7software.spotifysongdisplay.MainActivity">
 
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
+
     <Switch
         android:id="@+id/swiShowSong"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="15dp"
         android:layout_alignParentEnd="true"
         android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
         android:text="Show Song Details on Screen Overlay" />
@@ -19,13 +34,15 @@
         android:id="@+id/swiScreenOn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="15dp"
         android:layout_alignParentEnd="true"
         android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
         android:text="Switch on Screen When Track Changes" />
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp">
 
         <TextView
             android:text="Text Position"
@@ -47,7 +64,9 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp">
+
         <TextView
             android:id="@+id/txtLabel1"
             android:layout_width="wrap_content"
@@ -63,9 +82,19 @@
             android:progress="32"
             android:text="Text Size"/>
     </RelativeLayout>
+
     <TextView
         android:id="@+id/txtDemo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="15dp"
         android:text="Title/Artist"/>
+
+    <Button
+        android:id="@+id/btnActivate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="Apply Settings" />
+
 </LinearLayout>

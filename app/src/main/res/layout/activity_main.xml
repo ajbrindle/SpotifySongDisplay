@@ -22,13 +22,22 @@
     </android.support.design.widget.AppBarLayout>
 
     <Switch
+        android:id="@+id/swiActivate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="15dp"
+        android:layout_alignParentEnd="true"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+        android:text="Activate Show Song Service" />
+
+    <Switch
         android:id="@+id/swiShowSong"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="15dp"
         android:layout_alignParentEnd="true"
         android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-        android:text="Show Song Details on Screen Overlay" />
+        android:text="Show Song Details on Screen" />
 
     <Switch
         android:id="@+id/swiScreenOn"
@@ -38,6 +47,15 @@
         android:layout_alignParentEnd="true"
         android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
         android:text="Switch on Screen When Track Changes" />
+
+    <Switch
+        android:id="@+id/swiTTS"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="15dp"
+        android:layout_alignParentEnd="true"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+        android:text="Speak Track and Artist" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -95,6 +113,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:text="Apply Settings" />
+        android:text="Exit and Use These Settings" />
 
 </LinearLayout>

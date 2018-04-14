@@ -9,8 +9,10 @@ import android.content.SharedPreferences;
 
 public class PreferencesUtil {
     public static final String APP_PREFERENCES_KEY = "SK7_SPOTIFY_TRACK_DISPLAY_PREFS";
+    public static final String PREFERNECE_ACTIVE = "PREF_ACTIVE";
     public static final String PREFERNECE_SHOW_TRACK = "PREF_SHOW_TRACK";
     public static final String PREFERNECE_SCREEN_ON = "PREF_SCREEN_ON";
+    public static final String PREFERNECE_TTS = "PREF_TTS";
     public static final String PREFERENCE_TEXT_SIZE = "PREF_TEXT_SIZE";
     public static final String PREFERENCE_DISPLAY_POSITION = "PREF_DISPLAY_POSITION";
     public static final String PREFERENCE_LAST_TRACK = "PREF_LAST_TRACK";

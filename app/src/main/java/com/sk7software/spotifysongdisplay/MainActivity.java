@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.provider.Settings;
+import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -21,7 +22,13 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends Activity {
+import com.sk7software.spotifysongdisplay.util.TextToSpeechUtil;
+
+import java.util.Locale;
+
+public class MainActivity extends Activity implements TextToSpeech.OnInitListener {
+
+    private final int ACT_CHECK_TTS_DATA = 1000;
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -40,14 +47,22 @@ public class MainActivity extends Activity {
         Toolbar tb = (Toolbar)findViewById(R.id.toolbar);
         tb.setTitle("Track Display");
 
-        Switch swiShowSong = (Switch)findViewById(R.id.swiShowSong);
-        boolean isChecked = PreferencesUtil.getInstance().getBooleanPreference(PreferencesUtil.PREFERNECE_SHOW_TRACK);
-        swiShowSong.setChecked(isChecked);
+        Switch swiActivate = (Switch)findViewById(R.id.swiActivate);
+        boolean isChecked = PreferencesUtil.getInstance().getBooleanPreference(PreferencesUtil.PREFERNECE_ACTIVE);
+        swiActivate.setChecked(isChecked);
         updateTrackReceiverService(isChecked);
+
+        Switch swiShowSong = (Switch)findViewById(R.id.swiShowSong);
+        isChecked = PreferencesUtil.getInstance().getBooleanPreference(PreferencesUtil.PREFERNECE_SHOW_TRACK);
+        swiShowSong.setChecked(isChecked);
 
         Switch swiScreenOn = (Switch)findViewById(R.id.swiScreenOn);
         isChecked = PreferencesUtil.getInstance().getBooleanPreference(PreferencesUtil.PREFERNECE_SCREEN_ON);
         swiScreenOn.setChecked(isChecked);
+
+        Switch swiTTS = (Switch)findViewById(R.id.swiTTS);
+        isChecked = PreferencesUtil.getInstance().getBooleanPreference(PreferencesUtil.PREFERNECE_TTS);
+        swiTTS.setChecked(isChecked);
 
         // Spinner for number of tracks to show in listening history
         Spinner spiPosition = (Spinner)findViewById(R.id.spiPosition);
@@ -92,16 +107,33 @@ public class MainActivity extends Activity {
         txtDemo.setTextSize(textSize);
         txtDemo.setTypeface(Typeface.DEFAULT_BOLD);
 
+        swiActivate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PreferencesUtil.getInstance().addPreference(PreferencesUtil.PREFERNECE_ACTIVE, isChecked);
+                updateTrackReceiverService(isChecked);
+            }
+        });
+
         swiShowSong.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 PreferencesUtil.getInstance().addPreference(PreferencesUtil.PREFERNECE_SHOW_TRACK, isChecked);
-                updateTrackReceiverService(isChecked);
             }
         });
 
         swiScreenOn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 PreferencesUtil.getInstance().addPreference(PreferencesUtil.PREFERNECE_SCREEN_ON, isChecked);
+            }
+        });
+
+        swiTTS.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PreferencesUtil.getInstance().addPreference(PreferencesUtil.PREFERNECE_TTS, isChecked);
+                if (isChecked) {
+                    checkTTS();
+                } else {
+                    destroyTTS();
+                }
             }
         });
 
@@ -128,8 +160,55 @@ public class MainActivity extends Activity {
             Toast.makeText(getApplicationContext(), "Track display service started", Toast.LENGTH_SHORT);
         } else {
             stopService(i);
+            TextToSpeechUtil.getInstance().destroy();
             Log.d(TAG, "Track display service stopped");
             Toast.makeText(getApplicationContext(), "Track display service stopped", Toast.LENGTH_SHORT);
         }
     }
+
+    private void checkTTS() {
+        // Check to see if we have TTS voice data
+        Intent ttsIntent = new Intent();
+        ttsIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
+        startActivityForResult(ttsIntent, ACT_CHECK_TTS_DATA);
+    }
+
+    private void destroyTTS() {
+        TextToSpeechUtil.getInstance().destroy();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode,
+                                    Intent data) {
+        if (requestCode == ACT_CHECK_TTS_DATA) {
+            if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
+                // Data exists, so we instantiate the TTS engine
+                TextToSpeechUtil.init(this, this);
+            } else {
+                // Data is missing, so we start the TTS
+                // installation process
+                Intent installIntent = new Intent();
+                installIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
+                startActivity(installIntent);
+            }
+        }
+    }
+
+    @Override
+    public void onInit(int status) {
+        TextToSpeechUtil.getInstance().onInit(status, "Text to speech is ready");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        TextToSpeechUtil.getInstance().destroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
+
+
 }

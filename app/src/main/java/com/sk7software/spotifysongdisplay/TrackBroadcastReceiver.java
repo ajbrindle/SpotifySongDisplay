@@ -6,11 +6,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
+import android.widget.Toast;
 
-public class TrackBroadcastReceiver extends Service {
+import com.sk7software.spotifysongdisplay.util.TextToSpeechUtil;
+
+public class TrackBroadcastReceiver extends Service implements TextToSpeech.OnInitListener {
 
     private static final String TAG = TrackBroadcastReceiver.class.getSimpleName();
+
+    private String trackName;
+    private String artistName;
 
     static final class BroadcastTypes {
         static final String SPOTIFY_PACKAGE = "com.spotify.music";
@@ -27,27 +34,36 @@ public class TrackBroadcastReceiver extends Service {
             // Ensure there is a context for preferences
             PreferencesUtil.init(context);
 
-            boolean showTrack = PreferencesUtil.getInstance().getBooleanPreference(PreferencesUtil.PREFERNECE_SHOW_TRACK);
+            boolean active = PreferencesUtil.getInstance().getBooleanPreference(PreferencesUtil.PREFERNECE_ACTIVE);
 
-            if (showTrack) {
+            if (active) {
                 String action = intent.getAction();
 
                 if (action.equals(BroadcastTypes.METADATA_CHANGED)) {
                     String trackId = intent.getStringExtra("id");
 
                     if (trackChanged(trackId)) {
-                        String artistName = intent.getStringExtra("artist");
-                        String trackName = intent.getStringExtra("track");
+                        artistName = intent.getStringExtra("artist");
+                        trackName = intent.getStringExtra("track");
                         Log.d(TAG, "Track: " + trackName + "; Artist: " + artistName + " (" + trackId + ")");
                         PreferencesUtil.getInstance().addPreference(PreferencesUtil.PREFERENCE_LAST_TRACK, trackId);
 
                         if (trackName != null && !"".equals(trackName)) {
-                            // Start overlay activity that displays title
-                            Intent i = new Intent(context, OverlayActivity.class);
-                            i.putExtra("track", trackName);
-                            i.putExtra("artist", artistName);
-                            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            context.startActivity(i);
+                            if (PreferencesUtil.getInstance().getBooleanPreference(PreferencesUtil.PREFERNECE_SHOW_TRACK)) {
+                                // Start overlay activity that displays title
+                                Intent i = new Intent(context, OverlayActivity.class);
+                                i.putExtra("track", trackName);
+                                i.putExtra("artist", artistName);
+                                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                context.startActivity(i);
+                            }
+                            if(PreferencesUtil.getInstance().getBooleanPreference(PreferencesUtil.PREFERNECE_TTS)) {
+                                if (!TextToSpeechUtil.getInstance().isRunning()) {
+                                    TextToSpeechUtil.init(context, TrackBroadcastReceiver.this);
+                                } else {
+                                    speakTrack();
+                                }
+                            }
                         }
                     }
                 }
@@ -71,6 +87,7 @@ public class TrackBroadcastReceiver extends Service {
     @Override
     public void onDestroy() {
         unregisterReceiver(trackReceiver);
+        TextToSpeechUtil.getInstance().destroy();
     }
 
     @Override
@@ -81,5 +98,15 @@ public class TrackBroadcastReceiver extends Service {
     private boolean trackChanged(String id) {
         String lastTrack = PreferencesUtil.getInstance().getStringPreference(PreferencesUtil.PREFERENCE_LAST_TRACK);
         return !id.equals(lastTrack);
+    }
+
+    @Override
+    public void onInit(int status) {
+        TextToSpeechUtil.getInstance().onInit(status, trackName + " by " + artistName);
+    }
+
+    private void speakTrack() {
+        TextToSpeechUtil.getInstance().saySomething(trackName + " by " + artistName,
+                TextToSpeech.QUEUE_FLUSH);
     }
 }

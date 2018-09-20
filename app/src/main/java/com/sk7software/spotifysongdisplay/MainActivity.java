@@ -22,6 +22,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sk7software.spotifysongdisplay.util.KeepAlive;
 import com.sk7software.spotifysongdisplay.util.TextToSpeechUtil;
 
 import java.util.Locale;
@@ -64,7 +65,11 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
         isChecked = PreferencesUtil.getInstance().getBooleanPreference(PreferencesUtil.PREFERNECE_TTS);
         swiTTS.setChecked(isChecked);
 
-        // Spinner for number of tracks to show in listening history
+        Switch swiLED = (Switch)findViewById(R.id.swiLED);
+        isChecked = PreferencesUtil.getInstance().getBooleanPreference(PreferencesUtil.PREFERNECE_LED);
+        swiLED.setChecked(isChecked);
+
+        // Spinner for text position
         Spinner spiPosition = (Spinner)findViewById(R.id.spiPosition);
         ArrayAdapter<CharSequence> positionAdapter = ArrayAdapter.createFromResource(this,
                 R.array.positions, android.R.layout.simple_spinner_item);
@@ -136,6 +141,13 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
                 }
             }
         });
+
+        swiLED.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PreferencesUtil.getInstance().addPreference(PreferencesUtil.PREFERNECE_LED, isChecked);
+            }
+        });
+
 
         Button btnActivate = (Button)findViewById(R.id.btnActivate);
         btnActivate.setOnClickListener(new View.OnClickListener() {

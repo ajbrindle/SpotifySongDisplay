@@ -13,6 +13,7 @@ public class PreferencesUtil {
     public static final String PREFERNECE_SHOW_TRACK = "PREF_SHOW_TRACK";
     public static final String PREFERNECE_SCREEN_ON = "PREF_SCREEN_ON";
     public static final String PREFERNECE_TTS = "PREF_TTS";
+    public static final String PREFERNECE_LED = "PREF_LED";
     public static final String PREFERENCE_TEXT_SIZE = "PREF_TEXT_SIZE";
     public static final String PREFERENCE_DISPLAY_POSITION = "PREF_DISPLAY_POSITION";
     public static final String PREFERENCE_LAST_TRACK = "PREF_LAST_TRACK";
